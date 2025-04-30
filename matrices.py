@@ -55,4 +55,3 @@ B = A[[0, 2], [1, 2]]  # array([2, 9])
 # All elements > 5
 mask = A > 5          # array([[False,...],[..]])
 filtered = A[mask]    # array([6, 7, 8, 9])
-print(mask)
