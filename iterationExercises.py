@@ -10,7 +10,7 @@ def findGCD(x, y):
     return x
 
 
-num1, num2 = 21, 28
+num1, num2 = 28, 21
 print(f"The GCD of {num1} and {num2} is {findGCD(num1, num2)}")
 
 # Extracting the Square Root
