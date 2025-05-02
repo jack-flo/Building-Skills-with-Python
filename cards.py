@@ -55,6 +55,51 @@ class Card (object):
     def __lt__(self, other):
         return (self.rank, self.suit) < (other.rank, other.suit)
 
+    def getHardValue(self):
+        if self.rank > 10:
+            return 10
+        else:
+            return self.rank
+
+    def getSoftValue(self):
+        if self.rank > 10:
+            return 10
+        elif self.rank == 1:
+            return 11
+        else:
+            return self.rank
+
+
+class Hand (object):
+    """The Hand has a collection of cards in a sequence"""
+
+    def __init__(self, *cards):
+        self.cards = list(cards)
+
+    def __str__(self):
+        hand = ",".join(map(str, self.cards))
+        return hand
+
+    def hardTotal(self):
+        total = 0
+        for card in self.cards:
+            total += card.getHardValue()
+        return total
+
+    def softTotal(self):
+        total = 0
+        aceFound = False
+        for card in self.cards:
+            if not aceFound and card.rank == 1:
+                total += card.getSoftValue()
+                aceFound = True
+            else:
+                total += card.getHardValue()
+        return total
+
+    def add(self, card):
+        self.cards.append(card)
+
 
 class Deck(object):
     """Cards are dealt from a deck, which holds dealing methods"""
@@ -73,10 +118,38 @@ class Deck(object):
         for card in self.deck:
             yield card
 
+# Generated code because I got bored of blackjack
 
-d = Deck()
-dealer = d.deal()
-c1 = dealer.__next__()
-c2 = dealer.__next__()
 
-print(c1, c2)
+def main():
+    # 1. build deck + deal initial cards
+    deck = Deck()
+    deck_gen = deck.deal()
+
+    player = Hand(next(deck_gen), next(deck_gen))
+    dealer = Hand(next(deck_gen), next(deck_gen))
+
+    # 2. player hits until hard ≥ 21
+    while player.hardTotal() < 21:
+        player.add(next(deck_gen))
+
+    # 3. dealer hits by the “soft 16 or less” rule
+    while True:
+        soft = dealer.softTotal()
+        hard = dealer.hardTotal()
+
+        if soft <= 16 or (soft > 21 and hard <= 16):
+            dealer.add(next(deck_gen))
+        else:
+            break
+
+    # 4. show results
+    print("Player’s final hand:", player)
+    print(" Player hard total:", player.hardTotal(),
+          "soft total:", player.softTotal())
+    print("Dealer’s final hand:", dealer)
+    print(" Dealer hard total:", dealer.hardTotal(),
+          "soft total:", dealer.softTotal())
+
+
+main()
