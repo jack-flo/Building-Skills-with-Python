@@ -72,3 +72,11 @@ class Deck(object):
         random.shuffle(self.deck)
         for card in self.deck:
             yield card
+
+
+d = Deck()
+dealer = d.deal()
+c1 = dealer.__next__()
+c2 = dealer.__next__()
+
+print(c1, c2)
