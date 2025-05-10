@@ -97,7 +97,9 @@
 #     print(total)
 
 
+# should result in [19, 9, 26, 20, 14, 20, 18, 8, 30, 30] with a total of 194
 game = '8/9-X X 6/4/X 8-X XXX'
+# game = 'X 7/9-X -881X 9/-64/X'
 
 
 def valid(game):
@@ -110,6 +112,7 @@ def valid(game):
     if len(frames) != 10:
         raise ValueError('Must parse into exactly 10 frames')
 
+    # ['8/', '9-', 'X ', 'X ', '6/', '4/', 'X ', '8-', 'X ', 'XXX']
     return frames
 
 
@@ -130,13 +133,14 @@ def framesToFlat(frames):
                 rolls.append(0)
             else:
                 rolls.append(int(ch))
+    # [8, 2, 9, 0, 10, 10, 6, 4, 4, 6, 10, 8, 0, 10, 10, 10, 10]
     return rolls
 
 
 def score(rolls):
     i = 0
     scores = []
-    for i in range(9):
+    for frame in range(1, 10):  # needed to use frame (or another variable apart from i) as that variable is re-assigned at the start of the loop, not affected by the +=
         if rolls[i] == 10:  # strike
             frameScore = 10 + rolls[i+1] + rolls[i+2]
             scores.append(frameScore)
@@ -144,6 +148,7 @@ def score(rolls):
         elif rolls[i] + rolls[i+1] == 10:  # spare
             frameScore = 10 + rolls[i+2]
             scores.append(frameScore)
+            i += 2
         else:
             frameScore = rolls[i] + rolls[i+1]
             scores.append(frameScore)
@@ -165,8 +170,14 @@ def main():
     rolls = framesToFlat(frames)
     frameScores, totalScore = score(rolls)
 
-    print(frameScores)
-    print(totalScore)
+    # produce scorecard
+
+    width = 4
+    # f"{x:?{width}} means convert x to a string, then pad it on the left so that it takes up exactly width characters
+    print(''.join(f"{n:>{width}}" for n in range(1, 11)))
+    print(''.join(f"{f:>{width}}" for f in frames))
+    print(''.join(f"{s:>{width}}" for s in frameScores))
+    print(f"Total: {totalScore}")
 
 
 if __name__ == '__main__':
