@@ -102,7 +102,29 @@ class Wall(object):
             yield card
 
 
-wall = Wall()
-wall.shuffle()
-wallDealer = wall.deal()
-print(next(wallDealer))
+class TileSet(object):
+    def __init__(self):
+        self.tiles = []
+
+    def __str__(self):
+        string = ''.join(self.tiles)
+        return string
+
+    def canContain(self, aTile):
+        if self.tiles == []:
+            return True
+        elif self.full():
+            return False
+        else:
+            return aTile == self.tiles[-1]
+
+    def full(self):
+        return NotImplemented
+
+    def pair(self):
+        return False  # need to override for pair class
+
+    def add(self, aTile):
+        self.tiles.append(aTile)
+
+    # figure out fallback()
