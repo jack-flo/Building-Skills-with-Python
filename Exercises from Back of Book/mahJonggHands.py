@@ -107,11 +107,10 @@ class TileSet(object):
         self.tiles = []
 
     def __str__(self):
-        string = ''.join(self.tiles)
-        return string
+        return '[' + ', '.join(str(t) for t in self.tiles) + ']'
 
     def canContain(self, aTile):
-        if self.tiles == []:
+        if not self.tiles:
             return True
         elif self.full():
             return False
@@ -127,4 +126,50 @@ class TileSet(object):
     def add(self, aTile):
         self.tiles.append(aTile)
 
-    # figure out fallback()
+    def fallback(self, tileStack):
+        for t in reversed(self.tiles):
+            tileStack.insert(0, t)
+        # return an instance of the subclass that called the method
+        return type(self)()
+
+
+class PairSet(TileSet):
+    def full(self):
+        return len(self.tiles) == 2
+
+    def pair(self):
+        return True
+
+
+class ThreeSet(self):
+    def full(self):
+        return len(self.tiles) == 3
+
+
+class FourSet(TileSet):
+    def full(self):
+        return len(self.tiles) == 4
+
+
+class SequenceSet(TileSet):
+    """Holds 3 tiles of the same suit which must have an ascending rank"""
+
+    def full(self):
+        return len(self.tiles) == 3
+
+    def canContain(self, aTile):
+        if not self.tiles:
+            return True
+
+        if self.full():
+            return False
+
+        last = self.tiles[-1]
+        # check that is a suitTile
+        if not isinstance(aTile, SuitTile):
+            return False
+        # check is the same suit
+        if aTile.getSuit() != self.tiles[0].getSuit():
+            return False
+        # check ascending order
+        return aTile.getRank() == last.getRank() + 1
